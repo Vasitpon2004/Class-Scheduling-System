@@ -56,6 +56,8 @@ cp .env.example .env
 
 
 ## Project Structure
+
+```
 Class-Scheduling-System/
 ├── frontend/                 # ระบบหน้าบ้าน (React + Vite + Tailwind v4)
 │   ├── src/                  
@@ -70,6 +72,7 @@ Class-Scheduling-System/
     │   ├── appointments/     # โลจิกการจองตารางและตรวจสอบเวลาซ้อนทับ
     │   └── users/            # จัดการข้อมูล นิสิต, อาจารย์, แอดมิน
     └── package.json
+```
 
 ## Command 
 
