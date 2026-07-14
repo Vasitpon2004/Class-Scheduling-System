@@ -90,3 +90,8 @@ Class-Scheduling-System/
 | `git add .` | save |
 | `git commit -m "Test"` | create commit |
 | `git push -u origin Name_branch` | push your work into github |
+
+## Account For test
+| Email | Password |
+|---|---|
+| `Tle@ku.th` | Tle2244 |

@@ -6,7 +6,9 @@ import {
   History,
   Bell,
   ArrowUpRight,
+  LogOut, //1. เพิ่มไอคอน LogOut
 } from "lucide-react";
+import { useNavigate } from 'react-router-dom'; // 🌟 1. เพิ่ม useNavigate
 
 type Feature = {
   code: string;
@@ -66,6 +68,7 @@ const RULE = "#C9C2B2";
 
 export default function HomePage() {
   const [activeCode, setActiveCode] = useState<string>(FEATURES[0].code);
+  const navigate = useNavigate(); // 🌟 2. เรียกใช้งาน useNavigate
 
   const today = new Date().toLocaleDateString("th-TH", {
     weekday: "long",
@@ -73,6 +76,12 @@ export default function HomePage() {
     month: "long",
     year: "numeric",
   });
+
+  // 🌟 3. สร้างฟังก์ชันสำหรับออกจากระบบ
+  const handleLogout = () => {
+    // ในอนาคตคุณสามารถเพิ่มโค้ดลบ Token (เช่น localStorage.removeItem('token')) ไว้ตรงนี้ได้ครับ
+    navigate('/login');
+  };
 
   return (
     <div
@@ -145,32 +154,48 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Header */}
-          <header className="mb-10 md:mb-14">
-            <p
-              className="text-xs mb-2"
+          {/* 🌟 4. แก้ไขส่วน Header ให้มีปุ่ม Logout อยู่มุมขวา */}
+          <header className="mb-10 md:mb-14 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <div>
+              <p
+                className="text-xs mb-2"
+                style={{
+                  fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
+                  letterSpacing: "0.12em",
+                  color: "#6B7280",
+                  textTransform: "uppercase",
+                }}
+              >
+                {today}
+              </p>
+              <h1
+                className="text-3xl md:text-4xl"
+                style={{
+                  fontFamily: "'Fraunces', ui-serif, Georgia, serif",
+                  fontWeight: 600,
+                  color: INK,
+                }}
+              >
+                สวัสดี, Kim Jong Un
+              </h1>
+              <p className="mt-2 text-sm md:text-base" style={{ color: "#5B5548" }}>
+                นี่คือสมุดตารางของคุณวันนี้ — เลือกหัวข้อด้านล่างเพื่อเริ่มต้น
+              </p>
+            </div>
+            
+            {/* ปุ่มออกจากระบบ */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
               style={{
-                fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
-                letterSpacing: "0.12em",
-                color: "#6B7280",
-                textTransform: "uppercase",
+                backgroundColor: INK,
+                color: PAPER,
+                border: `1px solid ${RULE}`
               }}
             >
-              {today}
-            </p>
-            <h1
-              className="text-3xl md:text-4xl"
-              style={{
-                fontFamily: "'Fraunces', ui-serif, Georgia, serif",
-                fontWeight: 600,
-                color: INK,
-              }}
-            >
-              สวัสดี, Kim Jong Un
-            </h1>
-            <p className="mt-2 text-sm md:text-base" style={{ color: "#5B5548" }}>
-              นี่คือสมุดตารางของคุณวันนี้ — เลือกหัวข้อด้านล่างเพื่อเริ่มต้น
-            </p>
+              <LogOut size={16} />
+              ออกจากระบบ
+            </button>
           </header>
 
           {/* Feature grid */}
