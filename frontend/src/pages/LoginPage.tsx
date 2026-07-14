@@ -39,7 +39,7 @@ export default function LoginPage() {
             type="submit" 
             className="w-full rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700 font-medium"
           >
-            เข้าสู่ระบบ
+            <a href="/home">เข้าสู่ระบบ</a>
           </button>
         </form>
         
