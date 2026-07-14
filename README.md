@@ -83,3 +83,15 @@ Class-Scheduling-System/
 | `npm run start:dev` | Run Backend for dev |
 | `npm run test` | Run Unit Test |
 
+## Git Workflow
+
+| Command | Description |
+|---|---|
+| `git add .` | save |
+| `git commit -m "Test"` | create commit |
+| `git push -u origin Name_branch` | push your work into github |
+
+## Account For test
+| Email | Password |
+|---|---|
+| `Tle@ku.th` | Tle2244 |
