@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import RoleSelection from './pages/Register/RoleSelection';
 import NisitRegister from './pages/Register/Nisit/NisitRegister';
 import ProfessorRegister from './pages/Register/Professer/ProfesserRegister';
+import NisitInfo from './pages/Register/Nisit/NisitInfo';
 
 function App() {
   return (
@@ -17,7 +18,12 @@ function App() {
         {/* กำหนดเส้นทาง URL ให้แต่ละหน้า */}
         <Route path="/login" element={<Login />} />
         <Route path="/role-selection" element={<RoleSelection />} />
+        
+        {/*Nisit Routes*/}
         <Route path="/register/nisit" element={<NisitRegister />} />
+        <Route path="/register/nisit/info" element={<NisitInfo />} />
+
+        {/*Professor Routes*/}
         <Route path="/register/professor" element={<ProfessorRegister />} />
       </Routes>
     </BrowserRouter>

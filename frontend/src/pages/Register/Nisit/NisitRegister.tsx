@@ -1,7 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React from 'react';
 
 const PersonalInfo = () => {
+  // เรียกใช้ useNavigate เพื่อเปลี่ยนหน้าเมื่อกดปุ่ม
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); // คำสั่งกันหน้าเว็บ reload ตอนที่กดปุ่ม submit
+    console.log('Form submitted!');
+    // เมื่อกดปุ่มยืนยัน ให้เปลี่ยนหน้าไปยัง /register/nisit/info
+    navigate('/register/nisit/info');
+  }
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-4">
       {/* ส่วน Header */}
@@ -16,7 +25,7 @@ const PersonalInfo = () => {
           <p className="text-gray-400 text-sm font-medium">Hi! Welcome</p>
         </div>
 
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* แถวที่ 1: ชื่อ และ นามสกุล (แบ่งครึ่งซ้ายขวา) */}
           <div className="grid grid-cols-2 gap-4">
             <div>
