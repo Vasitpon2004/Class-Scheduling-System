@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectRoute';
 
 // Import หน้าจอที่เราสร้างไว้จากโฟลเดอร์ pages
 import Login from './pages/Login';
@@ -12,11 +13,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ให้หน้าแรก (/) เด้งไปที่หน้า /login อัตโนมัติ */}
+        {/* ให้หน้าแรก (/) ใครเข้าก็ได้ */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        {/* กำหนดเส้นทาง URL ให้แต่ละหน้า */}
         <Route path="/login" element={<Login />} />
+        
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+        {/* เลือกบทบาท */}
         <Route path="/role-selection" element={<RoleSelection />} />
         
         {/*Nisit Routes*/}
@@ -25,6 +28,8 @@ function App() {
 
         {/*Professor Routes*/}
         <Route path="/register/professor" element={<ProfessorRegister />} />
+
+        </Route>
       </Routes>
     </BrowserRouter>
   );

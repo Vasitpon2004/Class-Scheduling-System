@@ -9,7 +9,9 @@ const PersonalInfo = () => {
     e.preventDefault(); // คำสั่งกันหน้าเว็บ reload ตอนที่กดปุ่ม submit
     console.log('Form submitted!');
     // เมื่อกดปุ่มยืนยัน ให้เปลี่ยนหน้าไปยัง /register/nisit/info
-    navigate('/register/nisit/info');
+    navigate('/register/nisit/info', {
+      state: { isAllowed: true } // ส่งข้อมูล state ไปยังหน้าถัดไป
+    });
   }
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-4">

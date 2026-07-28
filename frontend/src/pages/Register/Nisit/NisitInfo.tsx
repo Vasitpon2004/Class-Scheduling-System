@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 // 1. Data Mapping: เก็บความสัมพันธ์ระหว่างคณะและสาขา
 const facultyMajors: Record<string, string[]> = {
@@ -27,13 +27,23 @@ const years = ["ปี1", "ปี2", "ปี3", "ปี4", "ปี5", "ปี6"]
 const programs = ["ภาคปกติ", "ภาคพิเศษ"];
 
 const NisitInfo = () => {
-  // 2. State Management
+  // State Management
+  const navigate = useNavigate();
+  const location = useLocation(); // ใช้ useLocation เพื่อเข้าถึง state ที่ส่งมาจากหน้าก่อนหน้า
   const [faculty, setFaculty] = useState('');
   const [major, setMajor] = useState('');
   const [year, setYear] = useState('');
   const [program, setProgram] = useState('');
 
-  // 3. ฟังก์ชันจัดการเมื่อเปลี่ยนคณะ
+  useEffect(() => {
+    const hasState = location.state?.isAllowed;
+    if (!hasState) {
+      // ถ้าไม่มี state ที่ถูกส่งมาจากหน้าก่อนหน้า ให้เปลี่ยนหน้าไปยัง /register/nisit
+      navigate('/register/nisit', { replace: true });
+    }
+  }, [navigate, location]);
+
+  // ฟังก์ชันจัดการเมื่อเปลี่ยนคณะ
   const handleFacultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedFaculty = e.target.value;
     setFaculty(selectedFaculty);

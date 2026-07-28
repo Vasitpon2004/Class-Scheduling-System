@@ -1,9 +1,15 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
+  const handleTestLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    localStorage.setItem('isAuth', 'true'); // บันทึกสถานะการเข้าสู่ระบบใน localStorage
+    navigate('/role-selection'); // เปลี่ยนหน้าไปยัง /role-selection
+  };
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-4">
       {/* ส่วน Header ระบบ */}
@@ -18,7 +24,7 @@ const Login = () => {
           <p className="text-gray-400 text-sm font-medium">Welcome Back!</p>
         </div>
 
-        <form className="space-y-4">
+        <form onSubmit={handleTestLogin} className="space-y-4">
           {/* Input: อีเมล */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
