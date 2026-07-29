@@ -23,23 +23,18 @@ const facultyMajors: Record<string, string[]> = {
   ]
 };
 
-const years = ["ปี1", "ปี2", "ปี3", "ปี4", "ปี5", "ปี6"];
-const programs = ["ภาคปกติ", "ภาคพิเศษ"];
-
-const NisitInfo = () => {
+const ProfessorInfo = () => {
   // State Management
   const navigate = useNavigate();
   const location = useLocation(); // ใช้ useLocation เพื่อเข้าถึง state ที่ส่งมาจากหน้าก่อนหน้า
   const [faculty, setFaculty] = useState('');
   const [major, setMajor] = useState('');
-  const [year, setYear] = useState('');
-  const [program, setProgram] = useState('');
 
   useEffect(() => {
     const hasState = location.state?.isAllowed;
     if (!hasState) {
-      // ถ้าไม่มี state ที่ถูกส่งมาจากหน้าก่อนหน้า ให้เปลี่ยนหน้าไปยัง /register/nisit
-      navigate('/register/nisit', { replace: true });
+      // ถ้าไม่มี state ที่ถูกส่งมาจากหน้าก่อนหน้า ให้เปลี่ยนหน้าไปยัง /register/professor
+      navigate('/register/professor', { replace: true });
     }
   }, [navigate, location]);
 
@@ -53,7 +48,7 @@ const NisitInfo = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ faculty, major, year, program });
+    console.log({ faculty, major });
     // TODO: ส่งข้อมูลไปยังหน้าถัดไป หรือ API
   };
 
@@ -135,4 +130,4 @@ const NisitInfo = () => {
   );
 };
 
-export default NisitInfo;
+export default ProfessorInfo;
