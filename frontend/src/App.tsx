@@ -6,8 +6,10 @@ import ProtectedRoute from './components/ProtectRoute';
 import Login from './pages/Login';
 import RoleSelection from './pages/Register/RoleSelection';
 import NisitRegister from './pages/Register/Nisit/NisitRegister';
-import ProfessorRegister from './pages/Register/Professer/ProfesserRegister';
 import NisitInfo from './pages/Register/Nisit/NisitInfo';
+
+import ProfessorRegister from './pages/Register/Professer/ProfessorRegister';
+import ProfessorInfo from './pages/Register/Professer/ProfessorInfo';
 
 function App() {
   return (
@@ -28,7 +30,7 @@ function App() {
 
         {/*Professor Routes*/}
         <Route path="/register/professor" element={<ProfessorRegister />} />
-
+        <Route path="/register/professor/info" element={<ProfessorInfo />} />
         </Route>
       </Routes>
     </BrowserRouter>

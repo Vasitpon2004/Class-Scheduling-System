@@ -1,7 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ProfessorRegister = () => {
+  const navigate = useNavigate();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Form submitted!');
+    navigate('/register/professor/info', {
+      state: { isAllowed: true } // ส่งข้อมูล state ไปยังหน้าถัดไป
+    });
+  }
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-4">
       {/* ส่วน Header ระบบ */}
@@ -16,7 +24,7 @@ const ProfessorRegister = () => {
           <p className="text-gray-400 text-sm font-medium">Hi! Welcome</p>
         </div>
 
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* แถวที่ 1: ชื่อ และ นามสกุล (แบ่งครึ่งซ้ายขวา) */}
           <div className="grid grid-cols-2 gap-4">
             <div>
