@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
 const RoleSelection = () => {
     const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-4">
       {/* ส่วน Header ระบบ */}
@@ -22,7 +22,7 @@ const RoleSelection = () => {
           {/* ปุ่ม NISIT (นักศึกษา) */}
           <button 
             className="flex-1 h-56 bg-green-500 hover:bg-green-600 text-white font-bold text-lg rounded-lg shadow-sm transition-colors duration-200 flex items-center justify-center"
-            onClick={() => navigate('/register/nisit')}
+            onClick={() => navigate('/register/nisit', { state: { role: 'nisit' } })}
           >
             NISIT
           </button>
@@ -30,7 +30,7 @@ const RoleSelection = () => {
           {/* ปุ่ม PROFESSOR (อาจารย์) */}
           <button 
             className="flex-1 h-56 bg-violet-500 hover:bg-violet-600 text-white font-bold text-lg rounded-lg shadow-sm transition-colors duration-200 flex items-center justify-center"
-            onClick={() => navigate('/register/professor')}
+            onClick={() => navigate('/register/professor', { state: { role: 'professor' } })}
           >
             PROFESSOR
           </button>

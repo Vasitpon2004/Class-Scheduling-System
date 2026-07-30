@@ -49,6 +49,9 @@ const ProfessorInfo = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log({ faculty, major });
+    navigate('/avatar-selection', {
+      state: { isAllowed: true } // ส่งข้อมูล state ไปยังหน้าถัดไป
+    });
     // TODO: ส่งข้อมูลไปยังหน้าถัดไป หรือ API
   };
 
