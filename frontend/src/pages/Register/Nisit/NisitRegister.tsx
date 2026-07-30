@@ -1,9 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
 
 const PersonalInfo = () => {
   // เรียกใช้ useNavigate เพื่อเปลี่ยนหน้าเมื่อกดปุ่ม
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // คำสั่งกันหน้าเว็บ reload ตอนที่กดปุ่ม submit
@@ -80,10 +81,23 @@ const PersonalInfo = () => {
               รหัสผ่าน
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="********"
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 placeholder-gray-300"
             />
+          </div>
+          
+          {/* Checkbox: แสดงรหัสผ่าน */}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="show-password"
+              className="h-4 w-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+              onChange={(e) => setShowPassword(e.target.checked)}
+            />
+            <label htmlFor="show-password" className="ml-2 text-sm text-gray-600">
+              แสดงรหัสผ่าน
+            </label>
           </div>
 
           {/* Button: ยืนยัน */}
