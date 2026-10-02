@@ -1,5 +1,6 @@
 import { useState, type SubmitEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import type { Role } from '../components/register-steps/RoleSelect'
 
 export default function LoginPage(){
     const navigate = useNavigate();
@@ -8,18 +9,28 @@ export default function LoginPage(){
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
 
-    const EX_EMAIL = "admin@ku.th";
-    const EX_PASS = "123456789"
+    const USER = [
+        {
+            email: "student@ku.th",
+            password: "123456789",
+            role: "student"
+        },{
+            email: "professor@ku.th",
+            password: "123456789",
+            role: "professor"
+        }
+    ] as const;
+
+    const HOME_BY_ROLE: Record<Role, string> = {
+        student: "/studentHome",
+        professor: "/professorHome",
+    };
 
     const handleSubmit = (e: SubmitEvent) => {
         e.preventDefault();
-        if(email == EX_EMAIL && password == EX_PASS){
-            setError('');
-            navigate('/home');
-        }else{
-            setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
-        }
-        
+        const found = USER.find((u) => u.email === email && u.password === password)
+        if (found) navigate(HOME_BY_ROLE[found.role]);
+        else setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
     };
 
     return (
