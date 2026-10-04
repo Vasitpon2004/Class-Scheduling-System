@@ -11,6 +11,8 @@ export interface RegisterFormData { // export ไว้เพื่อให้ 
   password: string;
   faculty: string;
   major: string;
+  year: string;
+  sec: string;
 }
 
 interface RegisterFormProps {
@@ -24,6 +26,9 @@ const baseFields = [
   { name: "lastName", label: "นามสกุล", type: "text" },
 ] as const;
 
+const YEARS = ["1", "2", "3", "4", "5", "6", "7", "8"] as const;
+const SECS = ["ปกติ", "พิเศษ"] as const;
+
 export default function RegisterForm({ role, onNext }: RegisterFormProps) {
   const [form, setForm] = useState<RegisterFormData>({
     firstName: "",
@@ -33,9 +38,12 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
     password: "",
     faculty: "",
     major: "",
+    year: "",
+    sec: "",
   });
 
   const idLabel = role === "professor" ? "รหัสอาจารย์" : "รหัสนิสิต"; // เปลี่ยน label ตาม role ที่เลือกมาจาก step ก่อนหน้า (step 2)
+  const roleLabel = role === "student";
 
   // ฟังก์ชันกลางสำหรับ field ทั่วไปที่ไม่มี logic พิเศษ (ไม่ต้อง reset ฟิลด์อื่น)
   const handleChange =
@@ -45,7 +53,7 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
 
   // ต้องกรอกทุก field ถึงกดถัดไปได้
   const canSubmit =
-    form.firstName && form.lastName && form.idCode && form.email && form.password && form.faculty &&form.major;
+    form.firstName && form.lastName && form.idCode && form.email && form.password && form.faculty &&form.major && (!roleLabel || form.year);
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -135,6 +143,7 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
               ))}
             </select>
           </div>
+
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">สาขา</label>
             <select
@@ -151,6 +160,38 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
               ))}
             </select>
           </div>
+
+          {roleLabel && (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">ชั้นปี</label>
+              <select 
+                value={form.year}
+                onChange={handleChange("year")}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="">— เลือกชั้นปี —</option>
+                {YEARS.map((y) => (
+                  <option key={y} value={y}>ปี {y}</option>
+                ))}
+              </select>
+            </div>           
+          )}  
+
+          {roleLabel && (
+            <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">แผนการเรียน</label>
+                <select 
+                  value={form.sec}
+                  onChange={handleChange("sec")}
+                  className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="">— เลือกแผนการเรียน —</option>
+                  {SECS.map((s) => (
+                    <option key={s} value={s}>ภาค{s}</option>
+                  ))}
+                </select>
+              </div>
+          )}    
         </div>
 
         <button
