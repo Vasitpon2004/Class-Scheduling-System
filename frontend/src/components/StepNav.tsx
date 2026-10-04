@@ -2,7 +2,6 @@ import { Check } from "lucide-react";
 
 interface Step {
   step: number;
-  label: string;
 }
 
 interface StepNavProps {
@@ -15,31 +14,12 @@ interface StepNavProps {
  * (Login, Forgot/Reset password, Register)
  *
  * props:
- * - steps: [{ step: number, label: string }]  รายการ step ทั้งหมดของ flow นั้นๆ
+ * - steps: [{ step: number }]  รายการ step ทั้งหมดของ flow นั้นๆ
  * - currentStep: number  step ปัจจุบัน (ใช้ตัดสินสี active/completed/pending)
  */
 export default function StepNav({ steps, currentStep }: StepNavProps) {
   return (
     <>
-      {/* pills ด้านบนสุด */}
-      <div className="mb-8 flex flex-wrap justify-center gap-2">
-        {steps.map(({ step, label }) => {
-          const isActive = step === currentStep;
-          return (
-            <span
-              key={step}
-              className={`rounded-full border px-3 py-1 text-sm ${
-                isActive
-                  ? "border-blue-600 bg-blue-600 text-white"
-                  : "border-gray-200 bg-white text-gray-400"
-              }`}
-            >
-              {label}
-            </span>
-          );
-        })}
-      </div>
-
       {/* วงกลม step + เส้นเชื่อม ด้านในการ์ด */}
       <div className="mb-6 flex items-center justify-center">
         {steps.map(({ step }, index) => {

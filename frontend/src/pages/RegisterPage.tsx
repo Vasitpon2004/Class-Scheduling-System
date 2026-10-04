@@ -3,7 +3,6 @@ import StepNav from "../components/StepNav";
 import RoleSelect from "../components/register-steps/RoleSelect";
 import RegisterForm from "../components/register-steps/RegisterForm";
 import OtpVerify from "../components/register-steps/OtpVerify";
-import AvatarPicker from "../components/register-steps/AvatarPicker";
 import ScheduleUpload from "../components/register-steps/ScheduleUpload";
 import ScheduleReview from "../components/register-steps/ScheduleReview";
 import RegisterDone from "../components/register-steps/RegisterDone";
@@ -16,7 +15,6 @@ interface RegisterState {
   step: number;
   role: Role | null;
   formData: RegisterFormData | null; // import type จาก RegisterForm.tsx
-  avatar: File | null;
   scheduleFile: File | null;
   scheduleSubStep: "upload" | "review";
   scheduleResult: {
@@ -29,29 +27,26 @@ type RegisterAction =
   | { type: "SELECT_ROLE"; role: Role }
   | { type: "SUBMIT_FORM"; data: RegisterFormData }
   | { type: "OTP_VERIFIED" }
-  | { type: "AVATAR_CONFIRMED"; avatar: File | null }
   | { type: "SCHEDULE_UPLOADED"; file: File; result: RegisterState["scheduleResult"] }
   | { type: "SCHEDULE_CONFIRMED" };
 //  | { type: "GO_BACK" };
 
 // step ทั้งหมดของ flow สมัครสมาชิก ใช้ป้อนให้ StepNav
 const STEPS = [
-  { step: 1, label: "1.Role" },
-  { step: 2, label: "2.Register" },
-  { step: 3, label: "3.OTP" },
-  { step: 4, label: "4.Avatar" },
-  { step: 5, label: "5.Schedule" },
-  { step: 6, label: "6.Done" },
+  { step: 1 },
+  { step: 2 },
+  { step: 3 },
+  { step: 4 },
+  { step: 5 },
 ];
 
-// step 5 มี 2 หน้าจอย่อย (อัปโหลด → ตรวจสอบผล) สลับกันโดยไม่ขยับ step หลัก
+// step 4 มี 2 หน้าจอย่อย (อัปโหลด → ตรวจสอบผล) สลับกันโดยไม่ขยับ step หลัก
 const initialState: RegisterState = {
   step: 1,
   role: null, // "student" | "professor"
   formData: null, // ข้อมูลจาก RegisterForm (step 2)
-  avatar: null, // ไฟล์รูปจาก AvatarPicker (step 4)
-  scheduleFile: null, // ไฟล์ screenshot ตารางเรียน (step 5a)
-  scheduleSubStep: "upload", // "upload" | "review" — sub-state ของ step 5b
+  scheduleFile: null, // ไฟล์ screenshot ตารางเรียน (step 4a)
+  scheduleSubStep: "upload", // "upload" | "review" — sub-state ของ step 4b
   scheduleResult: null, // ผลตรวจสอบจาก AI parse (matched/unmatched) — จะได้จาก backend จริง
 };
 
@@ -66,9 +61,6 @@ function registerReducer(state: RegisterState, action: RegisterAction): Register
     case "OTP_VERIFIED":
       return { ...state, step: 4 };
 
-    case "AVATAR_CONFIRMED":
-      return { ...state, avatar: action.avatar, step: 5, scheduleSubStep: "upload" };
-
     case "SCHEDULE_UPLOADED":
       // ในของจริง: ยิงไฟล์ไป POST /schedule/parse แล้วเอาผลมาใส่ scheduleResult
       return {
@@ -79,8 +71,8 @@ function registerReducer(state: RegisterState, action: RegisterAction): Register
       };
 
     case "SCHEDULE_CONFIRMED":
-      // ในของจริง: ยิง POST /schedule/confirm พร้อม selectedIds ก่อนค่อยไป step 6
-      return { ...state, step: 6 };
+      // ในของจริง: ยิง POST /schedule/confirm พร้อม selectedIds ก่อนค่อยไป step 5
+      return { ...state, step: 5 };
 
     //case "GO_BACK":
       //return { ...state, step: Math.max(1, state.step - 1) };
@@ -144,17 +136,11 @@ export default function RegisterPage() {
           />
         )}
 
-        {step === 4 && (
-          <AvatarPicker
-            onNext={(avatar) => dispatch({ type: "AVATAR_CONFIRMED", avatar })}
-          />
-        )}
-
-        {step === 5 && scheduleSubStep === "upload" && (
+        {step === 4 && scheduleSubStep === "upload" && (
           <ScheduleUpload onNext={handleScheduleUpload} />
         )}
 
-        {step === 5 && scheduleSubStep === "review" && (
+        {step === 4 && scheduleSubStep === "review" && (
           <ScheduleReview
             matched={scheduleResult?.matched}
             unmatched={scheduleResult?.unmatched}
@@ -162,7 +148,7 @@ export default function RegisterPage() {
           />
         )}
 
-        {step === 6 && <RegisterDone />}
+        {step === 5 && <RegisterDone />}
       </div>
     </div>
   );
