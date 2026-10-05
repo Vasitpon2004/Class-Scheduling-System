@@ -7,16 +7,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service.js';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
+import { OtpService } from '../otp/otp.service.js';
 let AuthService = class AuthService {
     usersService;
     jwtService;
-    constructor(usersService, jwtService) {
+    otpService;
+    constructor(usersService, jwtService, otpService) {
         this.usersService = usersService;
         this.jwtService = jwtService;
+        this.otpService = otpService;
     }
     async login(dto) {
         const user = await this.usersService.findByEmailWithPassword(dto.email);
@@ -48,11 +51,31 @@ let AuthService = class AuthService {
             },
         };
     }
+    async verifyOtp(dto) {
+        const user = await this.usersService.findByEmail(dto.email);
+        if (!user) {
+            throw new BadRequestException('ไม่พบรหัสยืนยันที่ใช้งานได้ กรุณาขอรหัสใหม่');
+        }
+        if (user.is_email_verified) {
+            throw new BadRequestException('อีเมลนี้ได้รับการยืนยันแล้ว กรุณาเข้าสู่ระบบ');
+        }
+        await this.otpService.verify(user.id, dto.otp_code);
+        await this.usersService.markEmailVerified(user.id);
+        return { message: 'ยืนยันอีเมลสำเร็จ' };
+    }
+    async resendOtp(dto) {
+        const user = await this.usersService.findByEmail(dto.email);
+        if (user && !user.is_email_verified) {
+            await this.otpService.createForUser(user.id);
+        }
+        return { message: 'ระบบได้ส่งรหัสใหม่ไปทางอีเมลเรียบร้อยแล้ว' };
+    }
 };
 AuthService = __decorate([
     Injectable(),
     __metadata("design:paramtypes", [UsersService,
-        JwtService])
+        JwtService,
+        OtpService])
 ], AuthService);
 export { AuthService };
 //# sourceMappingURL=auth.service.js.map

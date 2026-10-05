@@ -1,5 +1,6 @@
 import { UsersService } from './users.service.js';
-import { CreateUserDto } from '../auth/dto/create-user.dto.js';
+import { CreateUserDto } from './dto/create-user.dto.js';
+import { UserRole } from './enums/user-role.enum.js';
 export declare class UsersController {
     private readonly userService;
     constructor(userService: UsersService);
@@ -10,7 +11,7 @@ export declare class UsersController {
         last_name: string;
         user_code: string | null;
         email: string;
-        role: import("./enums/user-role.enum.js").UserRole;
+        role: UserRole;
         major: import("typeorm").Relation<import("../faculties/entities/major.entity.js").Major> | null;
         year: number | null;
         study_plan: import("./enums/study-plan.enum.js").StudyPlan | null;

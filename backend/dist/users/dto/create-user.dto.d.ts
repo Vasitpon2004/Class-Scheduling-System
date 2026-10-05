@@ -1,5 +1,5 @@
-import { UserRole } from '../../users/enums/user-role.enum.js';
-import { StudyPlan } from '../../users/enums/study-plan.enum.js';
+import { UserRole } from '../enums/user-role.enum.js';
+import { StudyPlan } from '../enums/study-plan.enum.js';
 export declare class CreateUserDto {
     first_name: string;
     last_name: string;

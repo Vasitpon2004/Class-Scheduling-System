@@ -4,15 +4,15 @@ import {
     IsEmail,
     IsEnum,
     IsInt,
-    IsOptional,
     MaxLength,
     MinLength,
     Min,
     Max,
     Matches,
+    ValidateIf,
 } from 'class-validator';
-import { UserRole } from '../../users/enums/user-role.enum.js'; 
-import { StudyPlan } from '../../users/enums/study-plan.enum.js';
+import { UserRole } from '../enums/user-role.enum.js'; 
+import { StudyPlan } from '../enums/study-plan.enum.js';
 
 export class CreateUserDto {
     @IsString()
@@ -25,7 +25,7 @@ export class CreateUserDto {
     @MaxLength(100)
     last_name: string;
     
-    @IsOptional()
+    @ValidateIf((o) => o.role === UserRole.NISIT || o.user_code !== undefined)
     @IsString()
     @MaxLength(20)
     user_code?: string;
@@ -41,18 +41,18 @@ export class CreateUserDto {
     @IsEnum(UserRole)
     role: UserRole;
 
-    @IsOptional()
+    @ValidateIf((o) => o.role === UserRole.NISIT || o.major_id !== undefined)
     @IsInt()
     @Min(1)
     major_id?: number;
 
-    @IsOptional()
+    @ValidateIf((o) => o.role === UserRole.NISIT)
     @IsInt()
     @Min(1)
     @Max(8)
     year?: number;
 
-    @IsOptional()
+    @ValidateIf((o) => o.role === UserRole.NISIT)
     @IsEnum(StudyPlan)
     study_plan?: StudyPlan;
 

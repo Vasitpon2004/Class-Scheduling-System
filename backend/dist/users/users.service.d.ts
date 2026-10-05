@@ -1,12 +1,15 @@
-import { CreateUserDto } from '../auth/dto/create-user.dto.js';
+import { CreateUserDto } from './dto/create-user.dto.js';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity.js';
 import { UserRole } from './enums/user-role.enum.js';
 import { Major } from '../faculties/entities/major.entity.js';
+import { OtpService } from '../otp/otp.service.js';
 export declare class UsersService {
     private userRepository;
     private majorRepository;
-    constructor(userRepository: Repository<User>, majorRepository: Repository<Major>);
+    private readonly otpService;
+    private readonly logger;
+    constructor(userRepository: Repository<User>, majorRepository: Repository<Major>, otpService: OtpService);
     findAll(): Promise<User[]>;
     create(dto: CreateUserDto): Promise<{
         id: number;
@@ -26,4 +29,6 @@ export declare class UsersService {
         created_at: Date;
     }>;
     findByEmailWithPassword(email: string): Promise<User | null>;
+    findByEmail(email: string): Promise<User | null>;
+    markEmailVerified(userId: number): Promise<void>;
 }

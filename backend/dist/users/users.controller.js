@@ -12,7 +12,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { UsersService } from './users.service.js';
-import { CreateUserDto } from '../auth/dto/create-user.dto.js';
+import { CreateUserDto } from './dto/create-user.dto.js';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { Roles } from '../auth/roles.decorator.js';
+import { UserRole } from './enums/user-role.enum.js';
+import { RolesGuard } from '../auth/guards/role.guard.js';
+import { ApiBearerAuth } from '@nestjs/swagger';
 let UsersController = class UsersController {
     userService;
     constructor(userService) {
@@ -26,6 +32,9 @@ let UsersController = class UsersController {
     }
 };
 __decorate([
+    Roles([UserRole.ADMIN]),
+    UseGuards(JwtAuthGuard, RolesGuard),
+    ApiBearerAuth(),
     Get(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),

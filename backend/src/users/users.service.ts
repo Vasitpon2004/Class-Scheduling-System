@@ -1,19 +1,23 @@
 import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import bcrypt from 'bcrypt';
-import { CreateUserDto } from '../auth/dto/create-user.dto.js';
+import { CreateUserDto } from './dto/create-user.dto.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity.js';
 import { UserRole } from './enums/user-role.enum.js';
 import { Major } from '../faculties/entities/major.entity.js';
+import { Logger } from '@nestjs/common';
+import { OtpService } from '../otp/otp.service.js';
 
 @Injectable()
 export class UsersService {
+    private readonly logger = new Logger(UsersService.name);
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
         @InjectRepository(Major)
         private majorRepository: Repository<Major>,
+        private readonly otpService: OtpService,
     ){}
 
     async findAll() {
@@ -53,15 +57,30 @@ export class UsersService {
         });
 
         const saved = await this.userRepository.save(user);
+
+        try{
+            await this.otpService.createForUser(saved.id);
+        } catch (error) {
+            this.logger.error('สร้าง OTP ไม่สำเร็จ สำหรับผู้ใช้งาน ' + saved.id , error);
+        }
+
         const { password_hash, ...result } = saved;
         return result;
     }
-
+    //ใช้สำหรับ Login
     async findByEmailWithPassword(email: string){
         return this.userRepository
         .createQueryBuilder('user')
         .addSelect('user.password_hash')
         .where('user.email = :email', { email })
         .getOne();
+    }
+
+    async findByEmail(email: string){
+        return this.userRepository.findOne({ where: { email } });
+    }
+
+    async markEmailVerified(userId: number): Promise<void>{
+        await this.userRepository.update(userId, { is_email_verified: true });
     }
 }

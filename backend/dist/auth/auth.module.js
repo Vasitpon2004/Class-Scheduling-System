@@ -10,21 +10,26 @@ import { AuthController } from './auth.controller.js';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersModule } from '../users/users.module.js';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategies/jwt.strategy.js';
+import { OtpModule } from '../otp/otp.module.js';
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
     Module({
         imports: [
             UsersModule,
+            OtpModule,
+            PassportModule,
             JwtModule.registerAsync({
                 inject: [ConfigService],
                 useFactory: (config) => ({
-                    secret: config.get('JWT_SECRET'),
+                    secret: config.getOrThrow('JWT_SECRET'),
                     signOptions: { expiresIn: Number(config.get('JWT_EXPIRES_IN')) },
                 }),
             }),
         ],
-        providers: [AuthService],
+        providers: [AuthService, JwtStrategy],
         controllers: [AuthController],
     })
 ], AuthModule);

@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { IsString, IsNotEmpty, IsEmail, IsEnum, IsInt, IsOptional, MaxLength, MinLength, Min, Max, Matches, } from 'class-validator';
-import { UserRole } from '../../users/enums/user-role.enum.js';
-import { StudyPlan } from '../../users/enums/study-plan.enum.js';
+import { IsString, IsNotEmpty, IsEmail, IsEnum, IsInt, MaxLength, MinLength, Min, Max, Matches, ValidateIf, } from 'class-validator';
+import { UserRole } from '../enums/user-role.enum.js';
+import { StudyPlan } from '../enums/study-plan.enum.js';
 export class CreateUserDto {
     first_name;
     last_name;
@@ -34,7 +34,7 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "last_name", void 0);
 __decorate([
-    IsOptional(),
+    ValidateIf((o) => o.role === UserRole.NISIT || o.user_code !== undefined),
     IsString(),
     MaxLength(20),
     __metadata("design:type", String)
@@ -54,20 +54,20 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "role", void 0);
 __decorate([
-    IsOptional(),
+    ValidateIf((o) => o.role === UserRole.NISIT || o.major_id !== undefined),
     IsInt(),
     Min(1),
     __metadata("design:type", Number)
 ], CreateUserDto.prototype, "major_id", void 0);
 __decorate([
-    IsOptional(),
+    ValidateIf((o) => o.role === UserRole.NISIT),
     IsInt(),
     Min(1),
     Max(8),
     __metadata("design:type", Number)
 ], CreateUserDto.prototype, "year", void 0);
 __decorate([
-    IsOptional(),
+    ValidateIf((o) => o.role === UserRole.NISIT),
     IsEnum(StudyPlan),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "study_plan", void 0);

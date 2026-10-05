@@ -13,6 +13,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
+import { VerifyOtpDto } from './dto/verify-otp.dto.js';
+import { ResendOtpDto } from './dto/resend-otp.dto.js';
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -20,6 +22,12 @@ let AuthController = class AuthController {
     }
     login(dto) {
         return this.authService.login(dto);
+    }
+    verifyOtp(dto) {
+        return this.authService.verifyOtp(dto);
+    }
+    resendOtp(dto) {
+        return this.authService.resendOtp(dto);
     }
 };
 __decorate([
@@ -30,6 +38,22 @@ __decorate([
     __metadata("design:paramtypes", [LoginDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
+__decorate([
+    Post('verify-otp'),
+    HttpCode(HttpStatus.OK),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [VerifyOtpDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "verifyOtp", null);
+__decorate([
+    Post('resend-otp'),
+    HttpCode(HttpStatus.OK),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [ResendOtpDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "resendOtp", null);
 AuthController = __decorate([
     Controller('auth'),
     __metadata("design:paramtypes", [AuthService])

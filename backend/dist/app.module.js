@@ -12,6 +12,7 @@ import { AppService } from './app.service.js';
 import { FacultiesModule } from './faculties/faculties.module.js';
 import { UsersModule } from './users/users.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { OtpModule } from './otp/otp.module.js';
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -33,6 +34,7 @@ AppModule = __decorate([
             FacultiesModule,
             UsersModule,
             AuthModule,
+            OtpModule,
         ],
         controllers: [AppController],
         providers: [AppService],
