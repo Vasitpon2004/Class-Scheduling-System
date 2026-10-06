@@ -10,11 +10,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { VerifyOtpDto } from './dto/verify-otp.dto.js';
 import { ResendOtpDto } from './dto/resend-otp.dto.js';
+import { Throttle } from '@nestjs/throttler';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
+import { CurrentUser } from './current-user.decorator.js';
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -29,8 +33,12 @@ let AuthController = class AuthController {
     resendOtp(dto) {
         return this.authService.resendOtp(dto);
     }
+    getProjile(user) {
+        return this.authService.getProfile(user.userId);
+    }
 };
 __decorate([
+    Throttle({ default: { limit: 5, ttl: 60000 } }),
     Post('login'),
     HttpCode(HttpStatus.OK),
     __param(0, Body()),
@@ -39,6 +47,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
 __decorate([
+    Throttle({ default: { limit: 10, ttl: 60000 } }),
     Post('verify-otp'),
     HttpCode(HttpStatus.OK),
     __param(0, Body()),
@@ -47,6 +56,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "verifyOtp", null);
 __decorate([
+    Throttle({ default: { limit: 1, ttl: 60000 } }),
     Post('resend-otp'),
     HttpCode(HttpStatus.OK),
     __param(0, Body()),
@@ -54,6 +64,15 @@ __decorate([
     __metadata("design:paramtypes", [ResendOtpDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "resendOtp", null);
+__decorate([
+    ApiBearerAuth(),
+    UseGuards(JwtAuthGuard),
+    Get('me'),
+    __param(0, CurrentUser()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "getProjile", null);
 AuthController = __decorate([
     Controller('auth'),
     __metadata("design:paramtypes", [AuthService])

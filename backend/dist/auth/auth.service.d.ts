@@ -24,4 +24,5 @@ export declare class AuthService {
     resendOtp(dto: ResendOtpDto): Promise<{
         message: string;
     }>;
+    getProfile(userId: number): Promise<import("../users/entities/user.entity.js").User>;
 }

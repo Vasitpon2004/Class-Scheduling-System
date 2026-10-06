@@ -31,4 +31,5 @@ export declare class UsersService {
     findByEmailWithPassword(email: string): Promise<User | null>;
     findByEmail(email: string): Promise<User | null>;
     markEmailVerified(userId: number): Promise<void>;
+    findById(id: number): Promise<User | null>;
 }

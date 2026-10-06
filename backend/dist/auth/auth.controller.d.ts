@@ -2,6 +2,7 @@ import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { VerifyOtpDto } from './dto/verify-otp.dto.js';
 import { ResendOtpDto } from './dto/resend-otp.dto.js';
+import type { JwtUser } from './jwt-user.interface.js';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
@@ -20,4 +21,5 @@ export declare class AuthController {
     resendOtp(dto: ResendOtpDto): Promise<{
         message: string;
     }>;
+    getProjile(user: JwtUser): Promise<import("../users/entities/user.entity.js").User>;
 }

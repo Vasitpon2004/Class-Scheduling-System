@@ -86,6 +86,12 @@ let UsersService = UsersService_1 = class UsersService {
     async markEmailVerified(userId) {
         await this.userRepository.update(userId, { is_email_verified: true });
     }
+    async findById(id) {
+        return this.userRepository.findOne({
+            where: { id },
+            relations: { major: { faculty: true } },
+        });
+    }
 };
 UsersService = UsersService_1 = __decorate([
     Injectable(),

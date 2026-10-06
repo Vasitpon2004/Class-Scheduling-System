@@ -13,6 +13,9 @@ import { FacultiesModule } from './faculties/faculties.module.js';
 import { UsersModule } from './users/users.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { OtpModule } from './otp/otp.module.js';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { SystemLogsModule } from './system-logs/system-logs.module.js';
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -20,6 +23,11 @@ AppModule = __decorate([
         imports: [
             ConfigModule.forRoot({
                 isGlobal: true,
+            }),
+            ThrottlerModule.forRoot({
+                throttlers: [
+                    { ttl: 60000, limit: 60 },
+                ],
             }),
             TypeOrmModule.forRoot({
                 type: 'postgres',
@@ -35,9 +43,10 @@ AppModule = __decorate([
             UsersModule,
             AuthModule,
             OtpModule,
+            SystemLogsModule,
         ],
         controllers: [AppController],
-        providers: [AppService],
+        providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard },],
     })
 ], AppModule);
 export { AppModule };

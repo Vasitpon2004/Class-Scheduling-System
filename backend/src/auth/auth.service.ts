@@ -40,7 +40,7 @@ export class AuthService {
         }
 
         if(!user.is_active){
-            throw new ForbiddenException('ขออภัย บัญชีของคุณถูกระงับการช้งาน');
+            throw new ForbiddenException('ขออภัย บัญชีของคุณถูกระงับการใช้งาน');
         }
 
         // ออก token ให้ผู้ใช้งาน
@@ -86,5 +86,18 @@ export class AuthService {
             await this.otpService.createForUser(user.id);
         }
         return { message: 'ระบบได้ส่งรหัสใหม่ไปทางอีเมลเรียบร้อยแล้ว' }
+    }
+
+    //Function สำหรับดึงข้อมูลโปรไฟล์ของผู้ใช้ตามIDที่ระบุ
+    async getProfile(userId: number){
+        //ค้นหาข้อมูลผู้ใช้ในDBแล้วนำมาเก็บใน user
+        const user = await this.usersService.findById(userId);
+
+        //เช็คกรณีไม่เจอผู้ใช้งาน
+        if(!user){
+            //ส่ง error HTTP Status 401 
+            throw new UnauthorizedException('ไม่พบบัญชีผู้ใช้');
+        }
+        return user;
     }
 }

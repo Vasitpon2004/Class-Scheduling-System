@@ -37,7 +37,7 @@ let AuthService = class AuthService {
             throw new ForbiddenException('กรุณารอการยืนยันจากผู้ดูแลระบบ');
         }
         if (!user.is_active) {
-            throw new ForbiddenException('ขออภัย บัญชีของคุณถูกระงับการช้งาน');
+            throw new ForbiddenException('ขออภัย บัญชีของคุณถูกระงับการใช้งาน');
         }
         const payload = { sub: user.id, role: user.role };
         const access_token = this.jwtService.sign(payload);
@@ -69,6 +69,13 @@ let AuthService = class AuthService {
             await this.otpService.createForUser(user.id);
         }
         return { message: 'ระบบได้ส่งรหัสใหม่ไปทางอีเมลเรียบร้อยแล้ว' };
+    }
+    async getProfile(userId) {
+        const user = await this.usersService.findById(userId);
+        if (!user) {
+            throw new UnauthorizedException('ไม่พบบัญชีผู้ใช้');
+        }
+        return user;
     }
 };
 AuthService = __decorate([

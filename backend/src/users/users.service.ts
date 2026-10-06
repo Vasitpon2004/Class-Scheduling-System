@@ -83,4 +83,12 @@ export class UsersService {
     async markEmailVerified(userId: number): Promise<void>{
         await this.userRepository.update(userId, { is_email_verified: true });
     }
+
+    //Function สำหรับค้นหาข้อมูลผู้ใช้จาก DB ด้วย ID โดยระบุดึงข้อมูลของ major ที่พ่วงกันมาด้วย
+    async findById(id: number) {
+        return this.userRepository.findOne({
+            where: { id }, //ค้นจาก Row ที่มี Column id ตรงกับค่า id ที่ส่งเข้ามาใน function
+            relations: { major: { faculty: true } }, //ดึงข้อมูล major/faculty ออกมาพร้อมกันด้วย
+        });
+    }
 }
