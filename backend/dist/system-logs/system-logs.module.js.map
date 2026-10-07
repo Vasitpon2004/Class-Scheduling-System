@@ -1,1 +1,0 @@
-{"version":3,"file":"system-logs.module.js","sourceRoot":"","sources":["../../src/system-logs/system-logs.module.ts"],"names":[],"mappings":";;;;;;AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,gBAAgB,CAAC;AACxC,OAAO,EAAE,iBAAiB,EAAE,MAAM,0BAA0B,CAAC;AAKtD,IAAM,gBAAgB,GAAtB,MAAM,gBAAgB;CAAG,CAAA;AAAnB,gBAAgB;IAH5B,MAAM,CAAC;QACN,SAAS,EAAE,CAAC,iBAAiB,CAAC;KAC/B,CAAC;GACW,gBAAgB,CAAG"}
