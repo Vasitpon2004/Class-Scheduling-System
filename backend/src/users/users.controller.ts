@@ -37,7 +37,7 @@ export class UsersController {
     @HttpCode(HttpStatus.OK)//สั่งให้เปลี่ยนการตอบกลับจาก 201 เป็น 200 แทน
     approveProfessor(
         @Param('id', ParseIntPipe) id: number,//ดึงค่า id จาก url ผ่าน @Param และบังคับส่งผ่าน ParseIntPipe เพื่อเปลี่ยนประเภทข้อมูลจาก string ให้เป็น number เพื่อนำไปเก็บในตัวแปร id
-        @CurrentUser() user: JwtUser,//ใช้คำสั่งพิเศษดึงโปรไฟล์ของผู้ใช้งาน(แอดมิน)มาเก็บไว้ในตัวแปร user
+        @CurrentUser() user: JwtUser,//ดึงข้อมูลจาก token ของแอดมินที่ Guard วางไว้ที่ request.user (มีแค่ userId กับ role) มาเก็บที่ user
     ){
         //ส่งข้อมูลไอดีอาจารย์และไอดีของแอดมินคนกระทำไปให้ function approveProfessor() ใน UsersService เพื่อปรับสถานะ
         return this.userService.approveProfessor(id, user.userId);

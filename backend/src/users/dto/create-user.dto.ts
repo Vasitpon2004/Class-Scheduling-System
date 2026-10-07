@@ -30,16 +30,19 @@ export class CreateUserDto {
         o.role === UserRole.PROFESSOR ||
         o.user_code !== undefined,
     )
+    @IsNotEmpty({ message: 'ต้องระบุรหัสประจำตัว' })
     @IsString()
     @MaxLength(20)
     user_code?: string;
 
     @IsEmail()
+    @MaxLength(150)
     @Matches(/@ku\.th$/, { message: 'ต้องเป็นอีเมล @ku.th เท่านั้น' })
     email: string;
 
     @IsString()
     @MinLength(8, { message: 'รหัสผ่านต้องยาวอย่างน้อย 8 ตัวอักษร' })
+    @MaxLength(16, { message: 'รหัสผ่านยาวได้ไม่เกิน 16 ตัวอักษร' })
     password: string;
 
     @IsEnum(UserRole)

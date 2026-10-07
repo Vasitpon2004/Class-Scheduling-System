@@ -47,7 +47,7 @@ export class UsersService {
             dto.user_code = dto.user_code!.toUpperCase();
             //ใช้ตรวจสอบรูปแบบตัวอักษร
             //^[A-Z] = ต้องขึ้นต้นด้วยตัวอักษรพิมพ์ใหญ่1ตัว
-            //d{4}$ = ต้องตามด้วยตัวเลข 4 ตัว
+            //\d{4}$ = ต้องตามด้วยตัวเลข 4 ตัว 0-9 ได้
             //.test(...) = คืนค่า true หากตรง format
             //แต่ใน if นี้มี ! อยู่หน้านั่นหมายถึงว่า หากเช็คแล้วไม่ตรง format จะให้เขา if นี้
             if(!/^[A-Z]\d{4}$/.test(dto.user_code)){
@@ -165,16 +165,16 @@ export class UsersService {
             throw new NotFoundException('ไม่พบผู้ใช้งานที่ระบุ');
         }
         if(user.role !== UserRole.PROFESSOR){
-            throw new BadRequestException('ผู้ใช้งานนี้ไม่ใช่อาจารย์ จึงไม่มีคำขอให้ปฎิเสธ');
+            throw new BadRequestException('ผู้ใช้งานนี้ไม่ใช่อาจารย์ จึงไม่มีคำขอให้ปฏิเสธ');
         }
         if(user.is_approved){
-            throw new BadRequestException('บัญชีนี้ได้รับการอนุมัติไปแล้ว ไม่สามารถปฎิเสธได้');
+            throw new BadRequestException('บัญชีนี้ได้รับการอนุมัติไปแล้ว ไม่สามารถปฏิเสธได้');
         }
 
         //เรียกใช้งาน systemLogsService เพื่อบันทึกกิจกรรมลง DB
         await this.systemLogsService.record({
-            action: LogAction.REJECT_PROFESSOR, //ระบุประเภทกิจกรรมว่าเป็นการปฎิเสธคำขออาจารย์
-            actor_user_id: actorUserId,//บันทึกไอดีของแอดมินที่เป็นคนกดปฎิเสธ
+            action: LogAction.REJECT_PROFESSOR, //ระบุประเภทกิจกรรมว่าเป็นการปฏิเสธคำขออาจารย์
+            actor_user_id: actorUserId,//บันทึกไอดีของแอดมินที่เป็นคนกดปฏิเสธ
             target_user_id: null,//ใส่ค่าเป็น null เพราะ target_user_id กำลังจะถูกลบ จึงไม่ผูก FK ของ target ไว้เพื่อป้องกันไม่ให้เกิด error
             detail: `ปฏิเสธคำขอ ${user.email} (${user.first_name} ${user.last_name}) เหตุผล: ${reason}`,
         });
