@@ -25,7 +25,11 @@ export class CreateUserDto {
     @MaxLength(100)
     last_name: string;
     
-    @ValidateIf((o) => o.role === UserRole.NISIT || o.user_code !== undefined)
+    @ValidateIf((o) => 
+        o.role === UserRole.NISIT || 
+        o.role === UserRole.PROFESSOR ||
+        o.user_code !== undefined,
+    )
     @IsString()
     @MaxLength(20)
     user_code?: string;

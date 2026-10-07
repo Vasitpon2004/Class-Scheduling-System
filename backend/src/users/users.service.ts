@@ -41,6 +41,21 @@ export class UsersService {
         if (dto.role !== UserRole.NISIT && (dto.year !== undefined || dto.study_plan !== undefined)){
             throw new BadRequestException('เฉพาะนิสิตเท่านั้นที่ระบุชั้นปีและแผนการเรียนได้')
         }
+        //ตรวจสอบformatข้อมูล user_code ของอาจารย์
+        if(dto.role === UserRole.PROFESSOR){
+            //นำรหัสที่ได้ไปทำให้เป็นตัวพิมพ์ใหญ่
+            dto.user_code = dto.user_code!.toUpperCase();
+            //ใช้ตรวจสอบรูปแบบตัวอักษร
+            //^[A-Z] = ต้องขึ้นต้นด้วยตัวอักษรพิมพ์ใหญ่1ตัว
+            //d{4}$ = ต้องตามด้วยตัวเลข 4 ตัว
+            //.test(...) = คืนค่า true หากตรง format
+            //แต่ใน if นี้มี ! อยู่หน้านั่นหมายถึงว่า หากเช็คแล้วไม่ตรง format จะให้เขา if นี้
+            if(!/^[A-Z]\d{4}$/.test(dto.user_code)){
+                throw new BadRequestException(
+                    'รหัสประจำตัวอาจารย์ต้องเป็นตัวอักษรภาษาอังกฤษ 1 ตัว ตามด้วยตัวเลข 4 หลัก เช่น Q1234',
+                );
+            }
+        }
         //เช็คสาขาว่ามีจริงหรือไม่ หากระบุรหัสสาขามาระบบจะไปค้นหาในตาราง Major เพื่อเช็คว่ามีจริงหรือไม่
         if (dto.major_id !== undefined) {
             const major = await this.majorRepository.findOne({ where: { id: dto.major_id } });
