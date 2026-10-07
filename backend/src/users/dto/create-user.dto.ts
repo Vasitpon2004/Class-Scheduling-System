@@ -25,10 +25,11 @@ export class CreateUserDto {
     @MaxLength(100)
     last_name: string;
     
+    //ตรวจว่าเข้าเงื่อนไขไหมถ้าตรงก็จะเช็ค
     @ValidateIf((o) => 
         o.role === UserRole.NISIT || 
         o.role === UserRole.PROFESSOR ||
-        o.user_code !== undefined,
+        o.user_code !== undefined
     )
     @IsNotEmpty({ message: 'ต้องระบุรหัสประจำตัว' })
     @IsString()
