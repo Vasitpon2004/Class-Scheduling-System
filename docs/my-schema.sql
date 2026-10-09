@@ -103,7 +103,7 @@ CREATE TABLE users(
 
 	//กฎ อาจารย์จะต้องกรอก รหัสประจำตัว ห้ามปล่อยว่าง
 	CONSTRAINT chk_professor_required CHECK (
-		role <> 'อาจารย์' OR user_code IS NOT NULL
+		role <> 'อาจารย์' OR (user_code IS NOT NULL AND major_id IS NOT NULL)
 	),
 
 	//กฎ อาจารย์จะต้องมีรหัสประจำตัวที่ประกอบไปด้วยอักษรภาษาอังกฤษพิมพ์ใหญ่ 1 ตัว ตามด้วยเลข 4 หลักเท่านั้น

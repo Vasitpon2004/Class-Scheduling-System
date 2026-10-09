@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
 import { GraduationCap, Laptop } from "lucide-react";
 
-export type Role = "student" | "professor";
+export type Role = "นิสิต" | "อาจารย์";
 
 interface RoleSelectProps {
   onSelect: (role: Role) => void;
 }
 
 const ROLES: { id: Role; label: string; icon: typeof GraduationCap }[] = [ // เป็น "ตารางข้อมูล" ของตัวเลือก role แค่ loop มาแสดงผลตามข้อมูล
-  { id: "student", label: "นิสิต", icon: GraduationCap },
-  { id: "professor", label: "อาจารย์", icon: Laptop },
+  { id: "นิสิต", label: "นิสิต", icon: GraduationCap },
+  { id: "อาจารย์", label: "อาจารย์", icon: Laptop },
 ];
 
 export default function RoleSelect({ onSelect }: RoleSelectProps) {

@@ -41,8 +41,8 @@ export class AuthController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard) //ตรวจสอบสิทธิ์ก่อนเข้าถึง API
     @Get('me')
-    //ใช้ดึงข้อมูงผู้ใช้งานผ่านการถอดรหัสจาก JWT มาเก็บไว้ใน user 
-    getProjile(@CurrentUser() user: JwtUser){
+    //ใช้ดึงข้อมูลผู้ใช้งานผ่านการถอดรหัสจาก JWT มาเก็บไว้ใน user 
+    getProfile(@CurrentUser() user: JwtUser){
         //ส่งข้อมูลไปประมวลผลที่ authService เพื่อดึงข้อมูลเต็มจาก DB แล้วส่งกลับมา
         return this.authService.getProfile(user.userId);
     }

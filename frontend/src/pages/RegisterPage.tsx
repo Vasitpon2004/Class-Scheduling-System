@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import StepNav from "../components/StepNav";
 import RoleSelect from "../components/register-steps/RoleSelect";
 import RegisterForm from "../components/register-steps/RegisterForm";
@@ -6,6 +6,7 @@ import OtpVerify from "../components/register-steps/OtpVerify";
 import ScheduleUpload from "../components/register-steps/ScheduleUpload";
 import ScheduleReview from "../components/register-steps/ScheduleReview";
 import RegisterDone from "../components/register-steps/RegisterDone";
+import { registerUser } from "../data/users";
 
 import type { RegisterFormData } from "../components/register-steps/RegisterForm";
 import type { MatchedSubject, UnmatchedSubject } from "../components/register-steps/ScheduleReview";
@@ -43,7 +44,7 @@ const STEPS = [
 // step 4 มี 2 หน้าจอย่อย (อัปโหลด → ตรวจสอบผล) สลับกันโดยไม่ขยับ step หลัก
 const initialState: RegisterState = {
   step: 1,
-  role: null, // "student" | "professor"
+  role: null, // "นิสิต" | "อาจารย์"
   formData: null, // ข้อมูลจาก RegisterForm (step 2)
   scheduleFile: null, // ไฟล์ screenshot ตารางเรียน (step 4a)
   scheduleSubStep: "upload", // "upload" | "review" — sub-state ของ step 4b
@@ -56,6 +57,7 @@ function registerReducer(state: RegisterState, action: RegisterAction): Register
       return { ...state, role: action.role, step: 2 };
 
     case "SUBMIT_FORM":
+      //มาถึงนี่ได้เมื่อบัญชีถูกสร้างและ OTP ออกมาแล้ว
       return { ...state, formData: action.data, step: 3 };
 
     case "OTP_VERIFIED":
@@ -86,6 +88,30 @@ export default function RegisterPage() {
   const [state, dispatch] = useReducer(registerReducer, initialState);
   const { step, role, formData, scheduleSubStep, scheduleResult } = state;
 
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  //Function จัดการส่งข้อมูล Register
+  const handleRegister = async(data: RegisterFormData) => {
+    //เช็คว่าผู้ใช้ได้เลือก role แล้วหรือยัง
+    if(!role) return;
+
+    //ตั้งค่าเพื่อให้ระบบรู้ว่า กำลังส่งข้อมูล
+    setSubmitting(true);
+    //เคลียร์errorเก่า ๆ ออก
+    setFormError(null);
+
+    try{
+      //ยิง request ไป backend เพื่อสมัครสมาชิก จะส่งform data และ role ไ
+      await registerUser(data, role);
+      //ถ้าสำเร็จ function จะส่งคำสั่งไปที่ตัวจัดการเพื่ออัปเดตข้อมูลผู้ใช้
+      dispatch({ type: "SUBMIT_FORM", data });
+    }catch (err){
+      setFormError(err instanceof Error ? err.message: "สมัครบัญชีไม่สำเร็จ กรุณาลองใหม่");
+    } finally {//ทำทุกรอบไม่ว่าจะสำเร็จหรือไม่ โดยจะตั้งค่า setSubmitting(false) เพื่อให้ปุ่มกลับมาทำงานได้ตามปกติ
+      setSubmitting(false);
+    }
+  };
   // จำลองเรียก backend ตรงจุดที่ยังไม่ได้ต่อจริง (มี TODO กำกับไว้ในแต่ละจุด)
   const handleScheduleUpload = async (file: File) => {
     // TODO: เปลี่ยนเป็นเรียกจริง เช่น
@@ -125,13 +151,15 @@ export default function RegisterPage() {
         {step === 2 && (
           <RegisterForm
             role={role}
-            onNext={(data) => dispatch({ type: "SUBMIT_FORM", data })}
+            onNext={handleRegister}
+            submitting={submitting}
+            error={formError}
           />
         )}
-
-        {step === 3 && (
+        /*เช็คเงื่อนไข คือ ต้องอยู่ step 3 จริง, ต้องมีข้อมูลลงทะเบียนจริง และเมื่อผ่านสองเงื่อนไขแรกระบบจึงจะเปิดให้กรอก OTP*/
+        {step === 3 && formData &&(
           <OtpVerify
-            email={formData?.email}
+            email={formData.email}
             onNext={() => dispatch({ type: "OTP_VERIFIED" })}
           />
         )}

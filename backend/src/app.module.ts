@@ -16,6 +16,7 @@ import { SystemLogsModule } from './system-logs/system-logs.module.js';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    // การตั้งค่า Rate Limiting ระยะเวลา 60 วินาที, จำนวนครั้ง 60 ครั้ง/นาที
     ThrottlerModule.forRoot({
       // เป็น Array
       throttlers: [
@@ -23,7 +24,7 @@ import { SystemLogsModule } from './system-logs/system-logs.module.js';
       ],
     }),
     
-    // การตั้งค่า Rate Limiting ระยะเวลา 60 วินาที, จำนวนครั้ง 60 ครั้ง/นาที
+    
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,

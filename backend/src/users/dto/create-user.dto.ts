@@ -49,7 +49,12 @@ export class CreateUserDto {
     @IsEnum(UserRole)
     role: UserRole;
 
-    @ValidateIf((o) => o.role === UserRole.NISIT || o.major_id !== undefined)
+    @ValidateIf((o) =>
+        o.role === UserRole.NISIT ||
+        o.role === UserRole.PROFESSOR ||
+        o.major_id !== undefined
+    )
+    @IsNotEmpty({ message: 'ต้องระบุสาขา' })
     @IsInt()
     @Min(1)
     major_id?: number;

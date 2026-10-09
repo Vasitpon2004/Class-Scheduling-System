@@ -1,7 +1,7 @@
 import { useState } from "react";
-
-import { FACULTIES } from "../../data/faculties";
+import { useFaculties } from "../../hooks/useFaculties";
 import type { Role } from "./RoleSelect";
+
 
 export interface RegisterFormData { // export ไว้เพื่อให้ RegisterPage.tsx import type นี้ไปใช้ตอนประกาศ RegisterState ได้
   firstName: string;
@@ -11,11 +11,15 @@ export interface RegisterFormData { // export ไว้เพื่อให้ 
   password: string;
   faculty: string;
   major: string;
+  year: string;
+  studyPlan: string;
 }
 
 interface RegisterFormProps {
   role: Role | null; 
   onNext: (data: RegisterFormData) => void;
+  submitting?: boolean;
+  error?: string | null;
 }
 
 // ฟิลด์ร่วมกันทุก role
@@ -24,7 +28,7 @@ const baseFields = [
   { name: "lastName", label: "นามสกุล", type: "text" },
 ] as const;
 
-export default function RegisterForm({ role, onNext }: RegisterFormProps) {
+export default function RegisterForm({ role, onNext, submitting, error }: RegisterFormProps) {
   const [form, setForm] = useState<RegisterFormData>({
     firstName: "",
     lastName: "",
@@ -33,23 +37,32 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
     password: "",
     faculty: "",
     major: "",
+    year: "",
+    studyPlan: "",
   });
+  //ดึงรายชื่อคณะ+สาขา จาก /faculties
+  const { faculties, loading, error: facultiesError } = useFaculties();
 
-  const idLabel = role === "professor" ? "รหัสอาจารย์" : "รหัสนิสิต"; // เปลี่ยน label ตาม role ที่เลือกมาจาก step ก่อนหน้า (step 2)
+  const isNisit = role === "นิสิต";
 
+  const idLabel = isNisit ? "รหัสนิสิต":"รหัสอาจารย์";
+  const majorLabel = isNisit ? "สาขา":"สาขาที่สังกัด"
   // ฟังก์ชันกลางสำหรับ field ทั่วไปที่ไม่มี logic พิเศษ (ไม่ต้อง reset ฟิลด์อื่น)
   const handleChange =
     (field: keyof RegisterFormData) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
       setForm((prev) => ({ ...prev, [field]: e.target.value }));
-
-  // ต้องกรอกทุก field ถึงกดถัดไปได้
-  const canSubmit =
-    form.firstName && form.lastName && form.idCode && form.email && form.password && form.faculty &&form.major;
-
-  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+  //ตรวจสอบข้อมูลพื้นฐานที่ผู้ใช้ต้องกรอก
+  const baseFilled = Boolean(
+    form.firstName && form.lastName && form.idCode && form.email && form.password
+  );
+  //ตรวจสอบข้อมูลเฉพาะของนิสิต
+  const nisitFilled = Boolean( form.year && form.studyPlan );
+    //เช็คข้อมูลก่อนส่งข้อมูล ถ้าเป็นนิสิตต้องกรอกข้อมูลพื้นฐานครบทั้งสองส่วน แต่ถ้าไม่ใช่ก็กรอกแค่ข้อมูลพื้นฐาน
+  const canSubmit = isNisit ? baseFilled && nisitFilled: baseFilled;
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (!canSubmit || submitting) return;
     onNext(form); // ส่งข้อมูลฟอร์มกลับไปให้ RegisterPage เก็บไว้ แล้วไป step(4 OTP) ถัดไป
   };
 
@@ -59,12 +72,12 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
     }))
   }
 
-  const majors = FACULTIES.find((f) => f.id === form.faculty)?.majors ?? []; // หาสาขาของคณะที่เลือก
+  const majors = faculties.find((f) => String(f.id) === form.faculty)?.majors ?? []; // หาสาขาของคณะที่เลือก
 
   return (
     <div>
       <h2 className="text-center text-2xl font-bold text-gray-800">
-        Register — {role === "professor" ? "อาจารย์" : "นิสิต"}
+        Register — {role}
       </h2>
       <p className="mt-2 text-center text-sm text-gray-500">
         กรอกข้อมูลเพื่อสมัครสมาชิก
@@ -88,9 +101,14 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
 
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">{idLabel}</label>
+          {/* นิสิตเห็นตัวอย่างรหัส 10 หลัก ส่วนอาจารย์เห็นรูปแบบ Qxxxx */}
           <input
             type="text"
             required
+            maxLength={20}
+            pattern={isNisit ? undefined: "[A-Za-z][0-9]{4}"}
+            title={isNisit ? undefined : "ตัวอักษรอังกฤษ 1 ตัว ตามด้วยเลข 4 หลัก เช่น Q1234"}
+            placeholder={isNisit ? "6621600437":"Q1234"}
             value={form.idCode}
             onChange={handleChange("idCode")}
             className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -114,12 +132,15 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
           <input
             type="password"
             required
+            minLength={8}
+            maxLength={16}
             value={form.password}
             onChange={handleChange("password")}
             className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
+        {/* คณะ + สาขา — ทุก role ต้องกรอก */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">คณะ</label>
@@ -127,17 +148,22 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
               required
               value={form.faculty}
               onChange={handleFacultyChange}
-              className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading || !!facultiesError}
+              className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
             >
-              <option value="">— เลือกคณะ —</option>
-              {FACULTIES.map((f) => (
-                <option key={f.id} value={f.id}>{f.name}</option>
+              <option value="">
+                {loading ? "— กำลังโหลด —" : facultiesError ? "— โหลดไม่สำเร็จ —" : "— เลือกคณะ —"}
+              </option>
+              {faculties.map((f) => (
+                <option key={f.id} value={f.id}>{f.faculty_name}</option>
               ))}
             </select>
+            {facultiesError && <p className="mt-1 text-sm text-red-600">{facultiesError}</p>}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">สาขา</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">{majorLabel}</label>
             <select
+              required
               value={form.major}
               onChange={handleChange("major")}
               disabled={!form.faculty}
@@ -147,19 +173,58 @@ export default function RegisterForm({ role, onNext }: RegisterFormProps) {
                 {form.faculty ? "— เลือกสาขา —" : "— เลือกคณะก่อน —"}
               </option>
               {majors.map((m) => (
-                <option key={m.id} value={m.id}>{m.name}</option>
+                <option key={m.id} value={m.id}>{m.major_name}</option>
               ))}
             </select>
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="w-full rounded-md bg-black px-4 py-2 font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-400"
-        >
-          ถัดไป
-        </button>
+        {/* ชั้นปี + แผนการเรียน — เฉพาะนิสิต เพราะ chk_nisit_fields ในฐานข้อมูล
+            บังคับให้สองคอลัมน์นี้เป็น NULL เมื่อ role ไม่ใช่ 'นิสิต' */}
+        {isNisit && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">ชั้นปี</label>
+              <select
+                required
+                value={form.year}
+                onChange={handleChange("year")}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="">— เลือกชั้นปี —</option>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">แผนการเรียน</label>
+              <select
+                required
+                value={form.studyPlan}
+                onChange={handleChange("studyPlan")}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="">— เลือกแผนการเรียน —</option>
+                <option value="ภาคปกติ">ภาคปกติ</option>
+                <option value="ภาคพิเศษ">ภาคพิเศษ</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="rounded-md border border-red-200 bg-red-50 p-3">
+            <p className="whitespace-pre-line text-sm text-red-700">{error}</p>
+          </div>
+        )}
+          <button
+            type="submit"
+            disabled={!canSubmit || submitting}
+            className="w-full rounded-md bg-black px-4 py-2 font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-400"
+          >
+            {submitting? "กำลังดำเนินการ":"ถัดไป"}
+          </button>
       </form>
     </div>
   );
